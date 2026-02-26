@@ -408,16 +408,61 @@ function CTA() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-600/20 rounded-full blur-[120px]" />
       </div>
       
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl md:text-6xl font-bold mb-8">Pronto para escalar as vendas da LaVita?</h2>
-        <p className="text-xl text-zinc-300 mb-12">
-          Nossa metodologia une inteligência de mercado, tecnologia e tráfego de alta performance para construir um ativo de vendas previsível para os seus empreendimentos.
-        </p>
-        
-        <button className="px-10 py-5 bg-red-600 hover:bg-red-700 text-white rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 inline-flex items-center gap-3">
-          Aprovar Estratégia
-          <ArrowRight className="w-6 h-6" />
-        </button>
+      <div className="relative z-10 max-w-5xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Pronto para escalar as vendas da LaVita?</h2>
+          <p className="text-xl text-zinc-300 max-w-3xl mx-auto">
+            O custo de não ter uma máquina de vendas previsível é muito maior do que o investimento para construí-la. Transforme sua presença digital em um ativo de conversão.
+          </p>
+        </div>
+
+        <div className="max-w-lg mx-auto bg-white rounded-3xl p-8 md:p-12 text-zinc-900 shadow-2xl relative">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg whitespace-nowrap">
+            Proposta Exclusiva
+          </div>
+          
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold mb-2">Assessoria Estratégica</h3>
+            <p className="text-zinc-600 font-medium">Gestão de Tráfego + Inteligência de CRM</p>
+          </div>
+
+          <div className="flex justify-center items-baseline gap-1 mb-8">
+            <span className="text-2xl font-bold text-zinc-400">R$</span>
+            <span className="text-6xl font-black text-zinc-900 tracking-tighter">2.000</span>
+            <span className="text-xl font-bold text-zinc-400">,00</span>
+            <span className="text-zinc-500 font-medium ml-1">/mês</span>
+          </div>
+
+          <ul className="space-y-4 mb-10">
+            {[
+              "Estudo de Localidade e Mercado",
+              "Dossiê Estratégico de Vendas",
+              "Gestão de Campanhas (Meta & Google Ads)",
+              "Otimização de Landing Pages",
+              "Integração e Automação de CRM",
+              "Acompanhamento direto com Vinicius (CEO)"
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-red-600 shrink-0" />
+                <span className="font-medium text-zinc-700 leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+          
+          <a 
+            href="https://wa.me/5511947755815?text=Olá%20Vinicius!%20Gostaria%20de%20iniciar%20a%20parceria%20para%20a%20LaVita%20Construtora."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-lg transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-red-600/30 flex items-center justify-center gap-3"
+          >
+            Iniciar Parceria Agora
+            <ArrowRight className="w-6 h-6" />
+          </a>
+          
+          <p className="text-center text-sm text-zinc-500 mt-6 font-medium">
+            *O valor de investimento nas plataformas de anúncios (budget) é definido separadamente pela construtora.
+          </p>
+        </div>
       </div>
     </section>
   );
