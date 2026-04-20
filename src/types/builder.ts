@@ -1,9 +1,14 @@
 /**
  * Tipos compartilhados do construtor (Builder).
  *
- * Esta é uma versão pragmática que mantém compatibilidade imediata com o código
- * existente, permitindo refino gradual para união discriminada por tipo sem
- * precisar migrar DEFAULT_PROPS e RenderElement de uma só vez.
+ * Esta versão usa uma união discriminada construída a partir de `BuilderElementType`
+ * via mapped type, permitindo narrowing correto do campo `type` em `switch/case` e
+ * em checagens de igualdade. Cada tipo mapeia para seu próprio shape de `props` via
+ * `BuilderElementPropsMap`.
+ *
+ * Para evoluir rumo a tipagem estrita por tipo, substitua cada entrada do
+ * `BuilderElementPropsMap` por uma interface dedicada (ex.: `HeadingProps`) e
+ * atualize `defaultProps.ts` + `RenderElement.tsx` caso a caso.
  */
 
 export type BuilderElementType =
@@ -16,12 +21,67 @@ export type BuilderElementType =
   | 'google_map' | 'comparison_table' | 'image_carousel' | 'toast_notification'
   | 'marketing_hero' | 'marketing_context' | 'marketing_strategy' | 'marketing_services' | 'marketing_pricing' | 'marketing_cta';
 
-export interface BuilderElement {
-  id: string;
-  type: BuilderElementType;
-  props: Record<string, unknown>;
-  children?: BuilderElement[];
+/**
+ * Mapa de props por tipo. Hoje quase todas usam `Record<string, unknown>` para manter
+ * compatibilidade com o DEFAULT_PROPS e o RenderElement atuais. Próximos passos:
+ * substituir progressivamente por interfaces dedicadas (HeadingProps, ButtonProps, ...).
+ */
+export interface BuilderElementPropsMap {
+  heading: Record<string, unknown>;
+  paragraph: Record<string, unknown>;
+  button: Record<string, unknown>;
+  image: Record<string, unknown>;
+  divider: Record<string, unknown>;
+  spacer: Record<string, unknown>;
+  video: Record<string, unknown>;
+  card: Record<string, unknown>;
+  stats: Record<string, unknown>;
+  accordion: Record<string, unknown>;
+  animated_text: Record<string, unknown>;
+  funnel: Record<string, unknown>;
+  icon_list: Record<string, unknown>;
+  pricing: Record<string, unknown>;
+  testimonial: Record<string, unknown>;
+  timeline: Record<string, unknown>;
+  navbar: Record<string, unknown>;
+  slider: Record<string, unknown>;
+  feature_grid: Record<string, unknown>;
+  gallery: Record<string, unknown>;
+  grid: Record<string, unknown>;
+  container: Record<string, unknown>;
+  column: Record<string, unknown>;
+  countdown: Record<string, unknown>;
+  whatsapp_button: Record<string, unknown>;
+  tabs: Record<string, unknown>;
+  progress_bar: Record<string, unknown>;
+  star_rating: Record<string, unknown>;
+  google_map: Record<string, unknown>;
+  comparison_table: Record<string, unknown>;
+  image_carousel: Record<string, unknown>;
+  toast_notification: Record<string, unknown>;
+  marketing_hero: Record<string, unknown>;
+  marketing_context: Record<string, unknown>;
+  marketing_strategy: Record<string, unknown>;
+  marketing_services: Record<string, unknown>;
+  marketing_pricing: Record<string, unknown>;
+  marketing_cta: Record<string, unknown>;
 }
+
+/**
+ * Construtor da união discriminada. Cada variante tem `type: K` literal e
+ * `props: BuilderElementPropsMap[K]`, permitindo que o TypeScript faça narrowing
+ * correto quando se faz `if (el.type === 'heading')` ou `switch (el.type)`.
+ */
+export type BuilderElementOfType<K extends BuilderElementType> = {
+  id: string;
+  type: K;
+  props: BuilderElementPropsMap[K];
+  children?: BuilderElement[];
+};
+
+export type BuilderElement = {
+  [K in BuilderElementType]: BuilderElementOfType<K>;
+}[BuilderElementType];
 
 export function isBuilderElement(value: unknown): value is BuilderElement {
   return !!value
@@ -29,4 +89,15 @@ export function isBuilderElement(value: unknown): value is BuilderElement {
     && 'id' in value
     && 'type' in value
     && 'props' in value;
+}
+
+/**
+ * Type guard específico por tipo. Útil em locais onde precisamos estreitar
+ * um `BuilderElement` genérico para uma variante concreta sem `switch`.
+ */
+export function isBuilderElementOfType<K extends BuilderElementType>(
+  value: BuilderElement,
+  type: K,
+): value is BuilderElementOfType<K> {
+  return value.type === type;
 }
