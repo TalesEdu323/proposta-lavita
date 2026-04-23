@@ -16,6 +16,8 @@ interface BuilderCanvasProps {
   onDropChild: (event: React.DragEvent, parentId: string) => void;
   onDragOver: (event: React.DragEvent) => void;
   toolbar?: React.ReactNode;
+  /** Altura do canvas contida (Propez Fluido). */
+  embedded?: boolean;
 }
 
 /**
@@ -37,6 +39,7 @@ export function BuilderCanvas({
   onDropChild,
   onDragOver,
   toolbar,
+  embedded = false,
 }: BuilderCanvasProps) {
   const renderElementNode = (el: BuilderElement) => {
     const isSelected = selectedId === el.id;
@@ -133,16 +136,27 @@ export function BuilderCanvas({
     );
   };
 
+  const canvasMinH = embedded ? 'min-h-[min(420px,55vh)]' : 'min-h-[800px]'
+  const outerMinH = embedded ? 'min-h-0 flex-1' : 'min-h-full'
+
   return (
     <div
-      className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar bg-transparent"
+      className="flex-1 min-h-0 flex flex-col relative overflow-y-auto custom-scrollbar bg-transparent"
       onDrop={onDropRoot}
       onDragOver={onDragOver}
       onClick={() => onSelectElement(null)}
     >
       {toolbar}
-      <div className={`min-h-full flex justify-center ${previewMode ? 'p-0' : 'p-8'}`}>
-        <div className={`w-full max-w-5xl bg-white min-h-[800px] transition-all duration-500 ${previewMode ? '' : 'shadow-xl border border-black/5 rounded-[2rem] p-8 pb-32 ring-1 ring-black/5'}`}>
+      <div className={`${outerMinH} flex justify-center ${previewMode ? 'p-0' : embedded ? 'p-3 sm:p-4' : 'p-8'}`}>
+        <div
+          className={`w-full max-w-5xl bg-white ${canvasMinH} transition-all duration-500 ${
+            previewMode
+              ? ''
+              : embedded
+                ? 'shadow-xl border border-black/5 rounded-2xl p-4 pb-10 sm:p-6 ring-1 ring-black/5'
+                : 'shadow-xl border border-black/5 rounded-[2rem] p-8 pb-32 ring-1 ring-black/5'
+          }`}
+        >
           {elements.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-500 border-2 border-dashed border-black/10 rounded-3xl p-12 bg-zinc-50/50 hover:bg-zinc-50 transition-colors">
               <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-black/5 flex items-center justify-center mb-4">

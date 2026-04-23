@@ -12,6 +12,8 @@ const builderElement = z.object({}).passthrough()
 const statusSchema = z.enum(['pendente', 'aprovada', 'recusada'])
 
 const bodySchema = z.object({
+  /** UUID gerado no cliente para alinhar cache/link antes do INSERT (opcional). */
+  id: z.string().uuid().optional(),
   cliente_id: z.string().uuid().optional().nullable(),
   cliente_nome: z.string().max(200).default(''),
   modelo_id: z.string().uuid().optional().nullable(),
@@ -83,18 +85,19 @@ export function createPropostasRouter(deps: {
     try {
       const { rows } = await pool.query(
         `INSERT INTO propostas (
-           organization_id, cliente_id, cliente_nome, modelo_id, servicos,
+           id, organization_id, cliente_id, cliente_nome, modelo_id, servicos,
            valor_cents, desconto_cents, recorrente, ciclo_recorrencia, duracao_recorrencia,
            data_envio, data_validade, status, elementos, contrato_texto, contrato_id,
            chave_pix, link_pagamento, pago, data_pagamento, creator_plan, prosync_lead_id
          ) VALUES (
-           $1, $2, $3, $4, $5::uuid[],
-           $6, $7, $8, $9, $10,
-           $11, $12, $13, $14::jsonb, $15, $16,
-           $17, $18, $19, $20, $21, $22
+           COALESCE($1::uuid, gen_random_uuid()), $2, $3, $4, $5, $6::uuid[],
+           $7, $8, $9, $10, $11,
+           $12, $13, $14, $15::jsonb, $16, $17,
+           $18, $19, $20, $21, $22, $23
          )
          RETURNING ${PROPOSTA_SELECT}`,
         [
+          d.id ?? null,
           req.auth.orgId,
           d.cliente_id ?? null,
           d.cliente_nome,

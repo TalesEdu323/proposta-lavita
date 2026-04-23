@@ -16,6 +16,7 @@ export interface PropertiesPanelProps {
   setActiveTab: (tab: BuilderTab) => void;
   setSelectedId: (id: string | null) => void;
   updateElement: (id: string, patch: Record<string, any>) => void;
+  embedded?: boolean;
 }
 
 /**
@@ -31,9 +32,12 @@ export function PropertiesPanel({
   setActiveTab,
   setSelectedId,
   updateElement,
+  embedded = false,
 }: PropertiesPanelProps) {
+  const widthClass = embedded ? 'w-[240px] shrink-0 min-w-0' : 'w-[320px]'
+
   return (
-    <div className="w-[320px] glass-panel border-l border-black/5 flex flex-col z-10 shadow-[-4px_0_24px_rgba(0,0,0,0.02)] transition-all">
+    <div className={`${widthClass} h-full min-h-0 glass-panel border-l border-black/5 flex flex-col z-10 shadow-[-4px_0_24px_rgba(0,0,0,0.02)] transition-all`}>
       <div className="flex border-b border-black/5 bg-zinc-50/80 shrink-0 p-2 gap-2">
         <button
           onClick={() => setActiveTab('properties')}
@@ -49,7 +53,7 @@ export function PropertiesPanel({
         </button>
       </div>
 
-      <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
+      <div className={`${embedded ? 'p-3' : 'p-5'} flex-1 min-h-0 overflow-y-auto custom-scrollbar`}>
         {activeTab === 'layers' ? (
           elements.length === 0 ? (
             <div className="text-center text-zinc-500 mt-10">

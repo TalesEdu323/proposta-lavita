@@ -80,6 +80,8 @@ export interface BuilderWidgetPaletteProps {
   allowedWidgets?: ReadonlySet<BuilderElementType>;
   /** Handler chamado quando o usuário clica num widget travado. */
   onLockedWidgetClick?: (type: BuilderElementType) => void;
+  /** Painel mais estreito dentro do Propez Fluido. */
+  embedded?: boolean;
 }
 
 /**
@@ -87,7 +89,12 @@ export interface BuilderWidgetPaletteProps {
  * para arrastar até o canvas. Puramente apresentacional — recebe apenas
  * o handler de `onDragStart` por props.
  */
-export function BuilderWidgetPalette({ onDragStart, allowedWidgets, onLockedWidgetClick }: BuilderWidgetPaletteProps) {
+export function BuilderWidgetPalette({
+  onDragStart,
+  allowedWidgets,
+  onLockedWidgetClick,
+  embedded = false,
+}: BuilderWidgetPaletteProps) {
   const isLocked = (type: BuilderElementType) => !!allowedWidgets && !allowedWidgets.has(type);
   const widgetProps = (type: BuilderElementType) => {
     const locked = isLocked(type);
@@ -101,16 +108,20 @@ export function BuilderWidgetPalette({ onDragStart, allowedWidgets, onLockedWidg
     };
   };
 
+  const widthClass = embedded ? 'w-[220px] shrink-0 min-w-0' : 'w-[300px]'
+
   return (
-    <div className="w-[300px] glass-panel flex flex-col border-r border-black/5 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all">
-      <div className="p-5 border-b border-black/5 flex items-center gap-3 bg-white/50">
-        <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center shadow-sm">
+    <div className={`${widthClass} glass-panel flex flex-col border-r border-black/5 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all min-h-0`}>
+      <div className={`${embedded ? 'p-3' : 'p-5'} border-b border-black/5 flex items-center gap-2 bg-white/50 shrink-0`}>
+        <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center shadow-sm shrink-0">
           <LayoutTemplate className="w-4 h-4 text-white" />
         </div>
-        <h1 className="font-semibold text-zinc-900 tracking-tight">Taggo Builder</h1>
+        <h1 className="font-semibold text-zinc-900 tracking-tight text-sm truncate">
+          {embedded ? 'Blocos' : 'Taggo Builder'}
+        </h1>
       </div>
 
-      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+      <div className={`${embedded ? 'p-2' : 'p-4'} flex-1 min-h-0 overflow-y-auto custom-scrollbar`}>
         <WidgetCategory title="Marketing Premium">
           <DraggableWidget type="marketing_hero" icon={<Sparkles />} label="Marketing Hero" {...widgetProps('marketing_hero')} />
           <DraggableWidget type="marketing_context" icon={<Layout />} label="Contexto" {...widgetProps('marketing_context')} />

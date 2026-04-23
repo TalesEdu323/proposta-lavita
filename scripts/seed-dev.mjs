@@ -6,7 +6,7 @@
  *   - organization "Propez Dev"
  *   - user dev@propez.local (senha: dev123dev)
  *   - email já verificado
- *   - defaults via seedOrgDefaults (contrato, serviço e 2 modelos)
+ *   - dados de exemplo mínimos (1 contrato, 1 serviço, 1 modelo) só nesta conta de dev
  *
  * Execução:
  *   DATABASE_URL=postgres://... node scripts/seed-dev.mjs

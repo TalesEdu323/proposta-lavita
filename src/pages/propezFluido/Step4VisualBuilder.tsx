@@ -16,15 +16,16 @@ export function Step4VisualBuilder({ formData, setFormData }: Step4Props) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      className="h-full flex flex-col"
+      className="flex-1 min-h-0 flex flex-col"
     >
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold text-zinc-900 mb-2 tracking-tight">Personalização Visual</h2>
-        <p className="text-zinc-500">Ajuste o design e os elementos da sua proposta.</p>
+      <div className="mb-4 md:mb-6 shrink-0">
+        <h2 className="text-2xl md:text-3xl font-semibold text-zinc-900 mb-2 tracking-tight">Personalização Visual</h2>
+        <p className="text-sm md:text-base text-zinc-500">Ajuste o design e os elementos da sua proposta.</p>
       </div>
 
-      <div className="flex-1 border border-black/5 rounded-3xl overflow-hidden bg-white shadow-2xl min-h-[600px]">
+      <div className="flex-1 min-h-0 flex flex-col border border-black/5 rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-xl">
         <Builder
+          embedded
           initialElements={formData.elementos}
           onChange={(els: BuilderElement[]) => setFormData(prev => ({ ...prev, elementos: els }))}
           previewMode={false}

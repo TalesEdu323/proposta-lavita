@@ -163,7 +163,7 @@ export default function App() {
           animate="animate"
           exit="exit"
           variants={pageVariants}
-          className="h-screen w-full overflow-hidden bg-[#F5F5F7]"
+          className="h-dvh min-h-0 w-full max-w-full overflow-hidden bg-[#F5F5F7]"
         >
           <Suspense fallback={loadingFallback}>{renderContent()}</Suspense>
         </motion.div>

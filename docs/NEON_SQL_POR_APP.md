@@ -62,7 +62,7 @@ Ao criar o primeiro usuário:
 
 1. Uma `organization` é criada com o nome da empresa informada.
 2. Ele vira `owner` dessa org (`memberships.role = 'owner'`).
-3. `seedOrgDefaults` insere 1 contrato template, 1 serviço e 2 modelos iniciais.
+3. A org começa **sem** contratos, serviços ou modelos — só dados que criares depois na UI (ou via `npm run seed:dev` numa base de desenvolvimento).
 
 ### Variáveis de ambiente relacionadas
 

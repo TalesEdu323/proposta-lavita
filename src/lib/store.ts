@@ -608,6 +608,7 @@ const modeloApi: EntityApi<ModeloProposta, ModeloPayload> = {
 };
 
 interface PropostaPayload {
+  id?: string;
   cliente_id?: string | null;
   cliente_nome: string;
   modelo_id?: string | null;
@@ -633,6 +634,7 @@ interface PropostaPayload {
 
 function toPropostaPayload(p: Proposta): PropostaPayload {
   return {
+    id: p.id,
     cliente_id: p.cliente_id || null,
     cliente_nome: p.cliente_nome,
     modelo_id: p.modelo_id ?? null,

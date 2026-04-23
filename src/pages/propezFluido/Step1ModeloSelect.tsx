@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { LayoutTemplate, Plus, Lock, Sparkles } from 'lucide-react';
+import { ExternalLink, LayoutTemplate, Plus, Lock, Sparkles } from 'lucide-react';
 import type { ModeloProposta } from '../../lib/store';
 import { resolvePlan } from '../../lib/store';
 import {
@@ -18,13 +18,14 @@ export interface Step1Props {
   formData: PropezFluidoFormData;
   onSelectModelo: (modeloId: string) => void;
   onNext: () => void;
+  onOpenModelos?: () => void;
 }
 
 /**
  * Step 1 do wizard: escolha de modelo base para iniciar a proposta.
  * Mantém o layout em grid de cards com opção "Começar do Zero".
  */
-export function Step1ModeloSelect({ modelos, formData, onSelectModelo, onNext }: Step1Props) {
+export function Step1ModeloSelect({ modelos, formData, onSelectModelo, onNext, onOpenModelos }: Step1Props) {
   const userConfig = useUserConfig();
   const plan = resolvePlan(userConfig);
   const [gate, setGate] = useState<{ open: boolean; requiredPlan: PlanTier; nome: string }>({
@@ -52,7 +53,22 @@ export function Step1ModeloSelect({ modelos, formData, onSelectModelo, onNext }:
     >
       <div className="mb-12">
         <h2 className="text-4xl font-semibold text-zinc-900 mb-3 tracking-tight">Escolha um Modelo Base</h2>
-        <p className="text-zinc-500 text-lg">Selecione um template para preencher automaticamente os serviços, valores e o design da proposta.</p>
+        <p className="text-zinc-500 text-lg">
+          Selecione um template para preencher automaticamente os serviços, valores, layout e o contrato da proposta.
+        </p>
+        {onOpenModelos && (
+          <p className="mt-3 text-sm text-zinc-600">
+            Quer criar ou editar modelos?{' '}
+            <button
+              type="button"
+              onClick={onOpenModelos}
+              className="inline-flex items-center gap-1 font-semibold text-zinc-900 underline underline-offset-2 hover:text-zinc-600"
+            >
+              Abrir página de Modelos
+              <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden />
+            </button>
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

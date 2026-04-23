@@ -14,6 +14,8 @@ export interface BuilderToolbarProps {
   exportLocked?: boolean;
   onClear: () => void;
   onSave?: () => void;
+  /** Dentro do Propez Fluido: só preview, sem importar/exportar/limpar. */
+  embedded?: boolean;
 }
 
 /**
@@ -33,9 +35,10 @@ export function BuilderToolbar({
   exportLocked = false,
   onClear,
   onSave,
+  embedded = false,
 }: BuilderToolbarProps) {
   return (
-    <div className="h-16 glass-panel border-b border-black/5 flex items-center justify-between px-6 sticky top-0 z-20 shadow-sm shrink-0 bg-white/80">
+    <div className="h-16 glass-panel border-b border-black/5 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 shadow-sm shrink-0 bg-white/80">
       <div className="flex items-center gap-2">
         {onBack && (
           <button onClick={onBack} className="btn-secondary mr-2">
@@ -50,7 +53,7 @@ export function BuilderToolbar({
           {previewMode ? 'Sair do Preview' : 'Preview'}
         </button>
       </div>
-      {!previewMode && (
+      {!previewMode && !embedded && (
         <div className="flex items-center gap-2">
           <label className="btn-secondary cursor-pointer">
             <Upload className="w-4 h-4" /> Importar
@@ -75,6 +78,13 @@ export function BuilderToolbar({
               </button>
             </>
           )}
+        </div>
+      )}
+      {!previewMode && embedded && onSave && (
+        <div className="flex items-center gap-2">
+          <button onClick={onSave} className="btn-primary">
+            <Save className="w-4 h-4" /> {saveLabel}
+          </button>
         </div>
       )}
     </div>

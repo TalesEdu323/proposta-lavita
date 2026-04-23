@@ -17,7 +17,7 @@ export interface WizardStepperProps {
  */
 export function WizardStepper({ step, steps, isEditing, formData, onBack }: WizardStepperProps) {
   return (
-    <div className="w-[32%] min-w-[360px] max-w-[440px] bg-zinc-900 text-white p-12 flex flex-col justify-between relative overflow-hidden hidden md:flex">
+    <div className="hidden md:flex md:w-[min(32%,420px)] md:max-w-[440px] md:min-w-0 shrink-0 bg-zinc-900 text-white p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden min-h-0">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-zinc-700 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute top-1/2 -right-32 w-80 h-80 bg-zinc-800 rounded-full blur-[100px]" />

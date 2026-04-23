@@ -49,10 +49,7 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-    },
+    // HMR em dev: `middlewareMode` + mesmo `http.Server` do Express em `attachViteOrStatic` (app.ts).
+    // Evita bind extra na porta 24678. Para desligar HMR: DISABLE_HMR=true no ambiente.
   };
 });

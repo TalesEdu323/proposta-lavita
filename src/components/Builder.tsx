@@ -41,6 +41,8 @@ export default function Builder({
   onChange,
   saveLabel = 'Salvar',
   previewMode: initialPreviewMode = false,
+  /** Dentro do Propez Fluido: não usa viewport inteira; toolbar reduzida. */
+  embedded = false,
 }: {
   initialElements?: ElementData[];
   onSave?: (elements: ElementData[]) => void;
@@ -48,6 +50,7 @@ export default function Builder({
   onChange?: (elements: ElementData[]) => void;
   saveLabel?: string;
   previewMode?: boolean;
+  embedded?: boolean;
 }) {
   const [elements, setElements] = useBuilderPersistence({ initialElements, onChange });
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -194,12 +197,15 @@ export default function Builder({
 
   const selectedElement = selectedId ? findElementRecursiveTree(elements, selectedId) : undefined;
 
+  const rootHeight = embedded ? 'h-full min-h-0 flex-1' : 'h-screen'
+
   return (
-    <div className="h-screen w-full flex bg-transparent font-sans overflow-hidden text-zinc-900">
+    <div className={`${rootHeight} w-full min-w-0 flex bg-transparent font-sans overflow-hidden text-zinc-900`}>
 
       {/* LEFT SIDEBAR: WIDGETS */}
       {!previewMode && (
         <BuilderWidgetPalette
+          embedded={embedded}
           onDragStart={handleDragStart}
           allowedWidgets={allowedWidgets}
           onLockedWidgetClick={openUpgradeForWidget}
@@ -208,6 +214,7 @@ export default function Builder({
 
       {/* CENTER: CANVAS (DROP ZONE) */}
       <BuilderCanvas
+        embedded={embedded}
         elements={elements}
         selectedId={selectedId}
         previewMode={previewMode}
@@ -220,6 +227,7 @@ export default function Builder({
         onDragOver={handleDragOver}
         toolbar={
           <BuilderToolbar
+            embedded={embedded}
             previewMode={previewMode}
             saveLabel={saveLabel}
             onBack={onBack}
@@ -236,6 +244,7 @@ export default function Builder({
       {/* RIGHT SIDEBAR: PROPERTIES PANEL */}
       {!previewMode && (
         <PropertiesPanel
+          embedded={embedded}
           elements={elements}
           selectedId={selectedId}
           selectedElement={selectedElement}

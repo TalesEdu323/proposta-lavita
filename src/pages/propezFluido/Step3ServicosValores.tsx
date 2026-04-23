@@ -1,5 +1,5 @@
-import { motion } from 'motion/react';
-import { Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Check, ExternalLink } from 'lucide-react';
 import type { Servico, ContratoTemplate } from '../../lib/store';
 import { formatBRL } from '../../lib/format';
 import type { PropezFluidoFormData, SetFormData } from './types';
@@ -9,9 +9,16 @@ export interface Step3Props {
   contratos: ContratoTemplate[];
   formData: PropezFluidoFormData;
   setFormData: SetFormData;
+  onOpenModelos?: () => void;
 }
 
-export function Step3ServicosValores({ servicosDisponiveis, contratos, formData, setFormData }: Step3Props) {
+export function Step3ServicosValores({
+  servicosDisponiveis,
+  contratos,
+  formData,
+  setFormData,
+  onOpenModelos,
+}: Step3Props) {
   const toggleServico = (servicoId: string) => {
     const newServicos = formData.servicos.includes(servicoId)
       ? formData.servicos.filter(id => id !== servicoId)
@@ -55,7 +62,23 @@ export function Step3ServicosValores({ servicosDisponiveis, contratos, formData,
     >
       <div className="mb-12">
         <h2 className="text-4xl font-semibold text-zinc-900 mb-3 tracking-tight">Serviços e Valores</h2>
-        <p className="text-zinc-500 text-lg">Defina o escopo e o investimento necessário.</p>
+        <p className="text-zinc-500 text-lg">Defina o escopo, prazos e o investimento necessário.</p>
+        {onOpenModelos && (
+          <p className="mt-4 text-sm text-zinc-600 max-w-2xl">
+            Layout da página e texto do contrato vêm do{' '}
+            <strong className="font-semibold text-zinc-900">modelo</strong> escolhido no passo 1. Para alterar
+            visual ou contrato, edite o modelo em{' '}
+            <button
+              type="button"
+              onClick={onOpenModelos}
+              className="inline-flex items-center gap-1 font-semibold text-zinc-900 underline underline-offset-2 hover:text-zinc-600"
+            >
+              Modelos
+              <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden />
+            </button>
+            .
+          </p>
+        )}
       </div>
 
       <div className="space-y-12">
@@ -123,6 +146,77 @@ export function Step3ServicosValores({ servicosDisponiveis, contratos, formData,
                 className="w-full bg-zinc-50 border-transparent rounded-2xl pl-14 pr-5 py-5 text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-zinc-100 transition-all tracking-tight text-emerald-600"
               />
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-bold text-zinc-400 mb-3 uppercase tracking-widest">Data de Envio *</label>
+              <input
+                type="date"
+                value={formData.envio}
+                onChange={e => setFormData(prev => ({ ...prev, envio: e.target.value }))}
+                className="w-full bg-zinc-50 border border-black/10 rounded-xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-zinc-400 mb-3 uppercase tracking-widest">Validade da Proposta *</label>
+              <input
+                type="date"
+                value={formData.validade}
+                onChange={e => setFormData(prev => ({ ...prev, validade: e.target.value }))}
+                className="w-full bg-zinc-50 border border-black/10 rounded-xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+              />
+            </div>
+          </div>
+
+          <div className="bg-zinc-50 p-6 rounded-3xl border border-black/5">
+            <label className="flex items-center gap-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.recorrente}
+                onChange={e => setFormData(prev => ({ ...prev, recorrente: e.target.checked }))}
+                className="w-5 h-5 text-black rounded border-black/20 focus:ring-black accent-black"
+              />
+              <span className="text-sm font-semibold text-zinc-900">Este é um serviço recorrente (assinatura)</span>
+            </label>
+
+            <AnimatePresence>
+              {formData.recorrente && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-6 overflow-hidden"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 mb-3 uppercase tracking-widest">Ciclo de Cobrança</label>
+                    <select
+                      value={formData.cicloRecorrencia}
+                      onChange={e => setFormData(prev => ({ ...prev, cicloRecorrencia: e.target.value }))}
+                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                    >
+                      <option value="semanal">Semanal</option>
+                      <option value="mensal">Mensal</option>
+                      <option value="trimestral">Trimestral</option>
+                      <option value="semestral">Semestral</option>
+                      <option value="anual">Anual</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 mb-3 uppercase tracking-widest">Duração (meses)</label>
+                    <input
+                      type="number"
+                      value={formData.duracaoRecorrencia}
+                      onChange={e => setFormData(prev => ({ ...prev, duracaoRecorrencia: e.target.value }))}
+                      placeholder="Ex: 12"
+                      className="w-full bg-white border border-black/10 rounded-xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

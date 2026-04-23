@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -109,11 +110,20 @@ export async function createApp(): Promise<{ app: Application; config: ReturnTyp
   return { app, config };
 }
 
-export async function attachViteOrStatic(app: Application, nodeEnv: string): Promise<void> {
+export async function attachViteOrStatic(
+  app: Application,
+  nodeEnv: string,
+  httpServer: http.Server,
+): Promise<void> {
   if (nodeEnv !== 'production') {
     const { createServer: createViteServer } = await import('vite');
+    const disableHmr = process.env.DISABLE_HMR === 'true';
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        // Mesmo servidor HTTP do Express — evita segundo bind na 24678 (conflito com 2× npm run dev).
+        hmr: disableHmr ? false : { server: httpServer },
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);

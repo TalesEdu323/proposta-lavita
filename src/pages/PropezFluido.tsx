@@ -15,17 +15,17 @@ import { WizardStepper } from './propezFluido/WizardStepper';
 import { Step1ModeloSelect } from './propezFluido/Step1ModeloSelect';
 import { Step2ClienteForm } from './propezFluido/Step2ClienteForm';
 import { Step3ServicosValores } from './propezFluido/Step3ServicosValores';
-import { Step4VisualBuilder } from './propezFluido/Step4VisualBuilder';
-import { Step5Contrato } from './propezFluido/Step5Contrato';
 import type { PropezFluidoFormData, StepDescriptor } from './propezFluido/types';
 import type { NavigateFn, RouteParams } from '../types/navigation';
+
+const TOTAL_WIZARD_STEPS = 3;
+/** Passo após o último do wizard (tela de sucesso). */
+const SUCCESS_STEP = TOTAL_WIZARD_STEPS + 1;
 
 const STEPS: StepDescriptor[] = [
   { id: 1, title: 'Modelo Base', desc: 'Escolha um ponto de partida' },
   { id: 2, title: 'Cliente', desc: 'Para quem é esta proposta?' },
-  { id: 3, title: 'Serviços & Valores', desc: 'O que está sendo oferecido' },
-  { id: 4, title: 'Visual Builder', desc: 'Personalize sua proposta' },
-  { id: 5, title: 'Contrato', desc: 'Termos e condições legais' },
+  { id: 3, title: 'Serviços e prazos', desc: 'Valores, datas e cobrança' },
 ];
 
 const INITIAL_FORM_DATA: PropezFluidoFormData = {
@@ -119,6 +119,7 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
         valor: '',
         elementos: [],
         contratoTexto: '',
+        contratoId: '',
         chavePix: '',
         linkPagamento: '',
       }));
@@ -234,15 +235,15 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
     }
 
     setCreatedPropostaId(newPropostaId);
-    setStep(6);
+    setStep(SUCCESS_STEP);
   };
 
-  if (step === 6 && !createdPropostaId) {
-    setStep(5);
+  if (step === SUCCESS_STEP && !createdPropostaId) {
+    setStep(TOTAL_WIZARD_STEPS);
     return null;
   }
 
-  if (step === 6) {
+  if (step === SUCCESS_STEP) {
     return (
       <SuccessStep
         propostaId={createdPropostaId}
@@ -259,23 +260,23 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
       alert('Preencha o nome do cliente.');
       return;
     }
-    if (step === 3 && (!formData.servicos.length || !formData.valor)) {
-      alert('Selecione pelo menos um serviço e preencha o valor.');
-      return;
-    }
-    if (step === 5 && (!formData.envio || !formData.validade)) {
-      alert('Preencha as datas de envio e validade.');
-      return;
-    }
-    if (step === 5) {
+    if (step === 3) {
+      if (!formData.servicos.length || !formData.valor) {
+        alert('Selecione pelo menos um serviço e preencha o valor.');
+        return;
+      }
+      if (!formData.envio || !formData.validade) {
+        alert('Preencha as datas de envio e validade.');
+        return;
+      }
       handleSave(replaceVariables(formData.elementos));
-    } else {
-      setStep(step + 1);
+      return;
     }
+    setStep(step + 1);
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#F5F5F7] overflow-hidden font-sans">
+    <div className="flex h-dvh min-h-0 w-full max-w-full bg-[#F5F5F7] overflow-hidden font-sans">
       <WizardStepper
         step={step}
         steps={STEPS}
@@ -284,28 +285,30 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
         onBack={() => navigate('propostas')}
       />
 
-      <div className="flex-1 bg-[#F5F5F7] h-full overflow-y-auto relative flex flex-col">
+      <div className="flex-1 min-h-0 min-w-0 bg-[#F5F5F7] flex flex-col overflow-hidden">
         {/* Mobile Header */}
-        <div className="md:hidden p-4 border-b border-black/[0.05] flex flex-col gap-4 sticky top-0 bg-white/80 backdrop-blur-2xl z-20">
+        <div className="md:hidden shrink-0 p-4 border-b border-black/[0.05] flex flex-col gap-4 bg-white/80 backdrop-blur-2xl z-20">
           <div className="flex items-center justify-between">
             <button onClick={() => navigate('propostas')} className="p-2 -ml-2 text-zinc-500">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">Passo {step} de 5</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+              Passo {step} de {TOTAL_WIZARD_STEPS}
+            </span>
             <div className="w-9" />
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${(step / 5) * 100}%` }}
+              animate={{ width: `${(step / TOTAL_WIZARD_STEPS) * 100}%` }}
               className="h-full bg-zinc-900"
               transition={{ duration: 0.3 }}
             />
           </div>
         </div>
 
-        <div className="flex-1 w-full max-w-4xl mx-auto py-12 px-6 md:py-24 md:px-20 flex flex-col">
-          <div className="flex-1">
+        <div className="flex-1 min-h-0 w-full max-w-4xl mx-auto py-6 px-4 sm:px-6 md:py-10 md:px-12 lg:px-20 flex flex-col overflow-hidden">
+          <div className="flex-1 min-h-0 flex flex-col overflow-y-auto">
             <AnimatePresence mode="wait">
               {step === 1 && (
                 <Step1ModeloSelect
@@ -313,6 +316,7 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
                   formData={formData}
                   onSelectModelo={handleModeloSelect}
                   onNext={() => setStep(2)}
+                  onOpenModelos={() => navigate('modelos')}
                 />
               )}
               {step === 2 && (
@@ -329,23 +333,14 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
                   contratos={contratos}
                   formData={formData}
                   setFormData={setFormData}
-                />
-              )}
-              {step === 4 && (
-                <Step4VisualBuilder formData={formData} setFormData={setFormData} />
-              )}
-              {step === 5 && (
-                <Step5Contrato
-                  contratos={contratos}
-                  formData={formData}
-                  setFormData={setFormData}
+                  onOpenModelos={() => navigate('modelos')}
                 />
               )}
             </AnimatePresence>
           </div>
 
           {/* Footer Actions */}
-          <div className="mt-12 pt-8 border-t border-black/5 flex items-center justify-between">
+          <div className="mt-6 md:mt-8 pt-6 shrink-0 border-t border-black/5 flex items-center justify-between gap-3">
             <button
               onClick={() => setStep(step - 1)}
               disabled={step === 1}
@@ -360,8 +355,8 @@ export default function PropezFluido({ navigate, initialData }: { navigate: Navi
               onClick={handleAdvance}
               className="bg-[#0a0a0a] text-white hover:bg-zinc-800 rounded-xl px-8 py-4 text-sm font-medium transition-all active:scale-[0.98] flex items-center gap-2 shadow-lg shadow-black/10"
             >
-              {step === 5 ? 'Gerar Proposta' : 'Próximo Passo'}
-              {step !== 5 && <ArrowRight className="w-4 h-4" />}
+              {step === TOTAL_WIZARD_STEPS ? 'Gerar Proposta' : 'Próximo Passo'}
+              {step !== TOTAL_WIZARD_STEPS && <ArrowRight className="w-4 h-4" />}
             </button>
           </div>
         </div>

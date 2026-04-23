@@ -20,7 +20,6 @@ import {
 } from '../auth/cookies.js'
 import { buildRequireAuth } from '../auth/middleware.js'
 import type { MailClient } from '../mail/resend.js'
-import { seedOrgDefaults } from '../db/seedDefaults.js'
 
 const EMAIL_CODE_TTL_MINUTES = 15
 const RESET_TOKEN_TTL_MINUTES = 30
@@ -167,7 +166,6 @@ export function createAuthRouter(deps: {
           `INSERT INTO memberships (user_id, organization_id, role) VALUES ($1, $2, 'owner')`,
           [userId, orgId],
         )
-        await seedOrgDefaults(client, orgId)
         await client.query(
           `INSERT INTO email_verifications (user_id, code_hash, expires_at) VALUES ($1, $2, $3)`,
           [userId, codeHash, expiresAt],

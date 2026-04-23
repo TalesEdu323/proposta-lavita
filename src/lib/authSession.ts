@@ -94,7 +94,15 @@ export async function fetchSession(): Promise<AuthSession | null> {
       setSession(null);
       return null;
     }
-    console.error('[authSession] fetchSession error', err);
+    if (err instanceof ApiError && err.status === 404) {
+      console.error(
+        '[authSession] fetchSession: /api/auth/me retornou 404 — o backend Express não está a servir esta origem. ' +
+          'Use `npm run dev` ou, após `npm run build`, `npm run preview` (não use `vite preview` sozinho: não inclui rotas /api).',
+        err,
+      );
+    } else {
+      console.error('[authSession] fetchSession error', err);
+    }
     setSession(null);
     return null;
   }
